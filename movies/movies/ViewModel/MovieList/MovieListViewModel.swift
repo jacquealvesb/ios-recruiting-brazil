@@ -112,7 +112,7 @@ class MovieListViewModel: ObservableObject {
         self.searchMovies = []
         self.dataProvider.fetchPopularMovies(page: self.page, completion: completion)
         if self.dataProvider.genres.isEmpty {
-            MovieService.fetchGenres()
+            dataProvider.fetchGenres()
         }
     }
     

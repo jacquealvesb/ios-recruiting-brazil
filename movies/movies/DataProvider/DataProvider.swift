@@ -17,6 +17,7 @@ protocol DataProvidable {
     var favoriteMovies: [Movie] { get }
     var genres: [Int: String] { get }
     
+    func fetchGenres()
     func fetchPopularMovies(page: Int, completion: (() -> Void)?)
     func fetchFavoriteMovies(completion: (() -> Void)?)
     func searchMovie(query: String, completion: @escaping (Result<[Movie], Error>) -> Void)
@@ -39,13 +40,13 @@ class DataProvider: DataProvidable, ObservableObject {
         return self.favoriteMoviesPublisher.value.0
     }
     
-    var genres: [Int: String] {
-        return MovieService.genres
-    }
+    var genres: [Int: String] = [:]
+    
     // Cancellables
     private var favoriteIdsSubscriber: AnyCancellable?
     
     init() {
+        fetchGenres()
         fetchPopularMovies(page: 1)
         
         favoriteIdsSubscriber = UserDefaults.standard.publisher(for: \.favorites)
@@ -55,15 +56,48 @@ class DataProvider: DataProvidable, ObservableObject {
             })
     }
     
+    public func fetchGenres() {
+        MovieService.shared.fetch(from: .genres) { result in
+            switch result {
+            case .failure(let error):
+                print(error)
+                return
+                
+            case .success(let data):
+                do {
+                    let genresResponse = try MovieService.shared.jsonDecoder.decode(GenresResponse.self, from: data) // Try to decode response
+                    guard let genres = genresResponse.genres else { return } // Get list of genres from response
+                    
+                    let genresDict = genres.reduce([Int: String](), { (dict, genre) -> [Int: String] in // Convert the list of genres to a dictionary
+                        var dict = dict
+                        dict[genre.id] = genre.name
+                        
+                        return dict
+                    })
+                    
+                    self.genres = genresDict // Set the dictionaty to the genres of class
+                    
+                } catch {
+                    return
+                }
+            }
+        }
+    }
+    
     public func fetchPopularMovies(page: Int, completion: (() -> Void)? = nil) {
-        MovieService.fecthMovies(params: ["page": "\(page)"]) { result in
+        MovieService.shared.fetch(from: .popularMovies) { result in
             switch result {
             case .failure(let error):
                 self.popularMoviesPublisher.send(([], error))
             case .success(let response):
-                let movies = response.results.map { Movie($0) } // Map response to array of movies
-                self.popularMoviesPublisher.send((movies, nil))
-
+                do {
+                    let movieResponse = try MovieService.shared.jsonDecoder.decode(MoviesResponse.self, from: response) // Try to decode response
+                    let movies = movieResponse.results.map { Movie($0) } // Map response to array of movies
+                    
+                    self.popularMoviesPublisher.send((movies, nil))
+                } catch {
+                    self.popularMoviesPublisher.send(([], MovieError.serializationError))
+                }
             }
             
             completion?()
@@ -82,12 +116,19 @@ class DataProvider: DataProvidable, ObservableObject {
         for id in ids {
             group.enter()
             
-            MovieService.fecthMovie(withId: id) { result in
+            MovieService.shared.fetch(from: .movie(id)) { result in
                 switch result {
                 case .failure(let error):
                     fetchError = error
-                case .success(let movie):
-                    favorites.append(movie)
+                case .success(let response):
+                    do {
+                        let movieResponse = try MovieService.shared.jsonDecoder.decode(MovieDTO.self, from: response) // Try to decode response
+                        let movie = Movie(movieResponse)
+                        
+                        favorites.append(movie)
+                    } catch {
+                        fetchError = error
+                    }
                 }
                 
                 group.leave()
@@ -110,8 +151,22 @@ class DataProvider: DataProvidable, ObservableObject {
     }
     
     func searchMovie(query: String, completion: @escaping (Result<[Movie], Error>) -> Void) {
-        MovieService.searchMovie(query: query) { result in
-            completion(result)
+        MovieService.shared.fetch(from: .search, withParams: ["query": query]) { result in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+                
+            case .success(let data):
+                do {
+                    let movieResponse = try MovieService.shared.jsonDecoder.decode(MoviesResponse.self, from: data) // Try to decode response
+                    let movies = movieResponse.results.map { Movie($0) }
+                    
+                    completion(.success(movies))
+                    
+                } catch {
+                    completion(.failure(MovieError.serializationError))
+                }
+            }
         }
     }
     

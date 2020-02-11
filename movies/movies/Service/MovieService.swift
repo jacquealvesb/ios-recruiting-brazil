@@ -16,157 +16,57 @@ public enum MovieError: Error {
     case serializationError
 }
 
-class MovieService {
-    private static let apiKey = "094fd8f84048425f068f6965ca8bb6af"
-    private static let baseAPIURL = "https://api.themoviedb.org/3"
-    public static var genres: [Int: String] = [:]
+public enum Endpoint {
+    case popularMovies
+    case movie(Int)
+    case search
+    case genres
     
-    static let jsonDecoder: JSONDecoder = {
+    var rawValue: String {
+        switch self {
+        case .popularMovies:
+            return "/movie/popular"
+        case .movie(let id):
+            return "/movie/\(id)"
+        case .search:
+            return "/search/movie"
+        case .genres:
+            return "/genre/movie/list"
+        }
+    }
+}
+
+class MovieService {
+    public static let shared = MovieService()
+    
+    private let apiKey = "094fd8f84048425f068f6965ca8bb6af"
+    private let baseAPIURL = "https://api.themoviedb.org/3"
+    public var genres: [Int: String] = [:]
+    
+    public let jsonDecoder: JSONDecoder = {
         let jsonDecoder = JSONDecoder()
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
         
         return jsonDecoder
     }()
     
-    /// Fetch movies from API using given params
+    /// Fetches data from API
     /// - Parameters:
+    ///   - endpoint: Endpoint in which request is supposed to be made
     ///   - params: Request params
-    ///   - completion: Results handler
-    static public func fecthMovies(params: [String: String]? = nil, completion: @escaping (Result<MoviesResponse, Error>) -> Void) {
-        guard let urlComponents = URLComponents(string: "\(baseAPIURL)/movie/popular") else { // URL to request from
+    ///   - completion: Completion handler
+    public func fetch(from endpoint: Endpoint, withParams params: [String: String]? = nil, completion: @escaping (Result<Data, Error>) -> Void) {
+        guard var urlComponents = URLComponents(string: baseAPIURL) else {
             completion(.failure(MovieError.invalidURL))
             return
         }
         
-        MovieService.request(urlComponents: urlComponents, params: params) { result in // Request data from url with params
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-                
-            case .success(let data):
-                do {
-                    let movieResponse = try self.jsonDecoder.decode(MoviesResponse.self, from: data) // Try to decode response
-                    
-                    DispatchQueue.main.async {
-                        completion(.success(movieResponse))
-                    }
-                } catch {
-                    completion(.failure(MovieError.serializationError))
-                }
-            }
-        }
-    }
-    
-    /// Fetch movie with id from API
-    /// - Parameters:
-    ///   - id: ID of the movie to fecth
-    ///   - params: Request params
-    ///   - completion: Results handler
-    static public func fecthMovie(withId id: Int, params: [String: String]? = nil, completion: @escaping (Result<Movie, Error>) -> Void) {
-        guard let urlComponents = URLComponents(string: "\(baseAPIURL)/movie/\(id)") else { // URL to request from
-            completion(.failure(MovieError.invalidURL))
-            return
-        }
-        
-        MovieService.request(urlComponents: urlComponents, params: params) { result in // Request data from url with params
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-                
-            case .success(let data):
-                do {
-                    let movieResponse = try self.jsonDecoder.decode(MovieDTO.self, from: data) // Try to decode response
-                    let movie = Movie(movieResponse)
-                    
-                    DispatchQueue.main.async {
-                        completion(.success(movie))
-                    }
-                } catch {
-                    completion(.failure(MovieError.serializationError))
-                }
-            }
-        }
-    }
-    
-    /// Fetch genres and their ids from API
-    static public func fetchGenres() {
-        guard let urlComponents = URLComponents(string: "\(baseAPIURL)/genre/movie/list") else { return } // URL to request from
-
-        MovieService.request(urlComponents: urlComponents) { result in // Request data from url
-            switch result {
-            case .failure(let error):
-                print(error)
-                return
-                
-            case .success(let data):
-                do {
-                    let genresResponse = try self.jsonDecoder.decode(GenresResponse.self, from: data) // Try to decode response
-                    
-                    DispatchQueue.main.async {
-                        guard let genres = genresResponse.genres else { return } // Get list of genres from response
-                        let genresDict = genres.reduce([Int: String](), { (dict, genre) -> [Int: String] in // Convert the list of genres to a dictionary
-                            var dict = dict
-                            dict[genre.id] = genre.name
-                            
-                            return dict
-                        })
-                        
-                        self.genres = genresDict // Set the dictionaty to the genres of class
-                    }
-                } catch {
-                    return
-                }
-            }
-        }
-    }
-    
-    /// Search a movie from API according to the given query text
-    /// - Parameters:
-    ///   - query: Text to be searching for on API
-    ///   - params: Request params
-    ///   - completion: Results handler
-    static public func searchMovie(query: String, params: [String: String]? = nil, completion: @escaping (Result<[Movie], Error>) -> Void) {
-        guard let urlComponents = URLComponents(string: "\(baseAPIURL)/search/movie") else { // URL to request from
-            completion(.failure(MovieError.invalidURL))
-            return
-        }
-        
-        var params: [String: String] = params ?? [:] // Initialize params dictionaty as empty if nil
-        params["query"] = query
-        
-        MovieService.request(urlComponents: urlComponents, params: params) { result in // Request data from url with params
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-                
-            case .success(let data):
-                do {
-                    let movieResponse = try self.jsonDecoder.decode(MoviesResponse.self, from: data) // Try to decode response
-                    let movies = movieResponse.results.map { Movie($0) }
-                    
-                    DispatchQueue.main.async {
-                        completion(.success(movies))
-                    }
-                } catch {
-                    completion(.failure(MovieError.serializationError))
-                }
-            }
-        }
-    }
-    
-    /// Request an URL from API
-    /// - Parameters:
-    ///   - urlComponents: Base URL with endpoint to request
-    ///   - params: Request params
-    ///   - completion: Results handler
-    static private func request(urlComponents: URLComponents, params: [String: String]? = nil, completion: @escaping (Result<Data, Error>) -> Void) {
-        var urlComponents = urlComponents
-        var queryItems = [ URLQueryItem(name: "api_key", value: apiKey)]
-        
+        var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
         if let params = params {
             queryItems.append(contentsOf: params.map { URLQueryItem(name: $0.key, value: $0.value) })
         }
-        
+    
+        urlComponents.path.append(contentsOf: endpoint.rawValue)
         urlComponents.queryItems = queryItems
         
         URLSession.shared.request(from: urlComponents.url, params: params) { result in

@@ -152,7 +152,7 @@ class FavoriteListViewModel: ObservableObject {
     public func refreshMovies(completion: @escaping () -> Void) {
         self.dataProvider.fetchFavoriteMovies(completion: completion)
         if self.dataProvider.genres.isEmpty {
-            MovieService.fetchGenres()
+            dataProvider.fetchGenres()
         }
     }
     
