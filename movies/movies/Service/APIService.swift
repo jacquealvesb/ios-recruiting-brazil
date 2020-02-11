@@ -1,5 +1,5 @@
 //
-//  MovieService.swift
+//  APIService.swift
 //  movies
 //
 //  Created by Jacqueline Alves on 03/12/19.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum MovieError: Error {
+public enum APIError: Error {
     case apiError
     case invalidURL
     case invalidResponse
@@ -36,8 +36,8 @@ public enum Endpoint {
     }
 }
 
-class MovieService {
-    public static let shared = MovieService()
+class APIService {
+    public static let shared = APIService()
     
     private let apiKey = "094fd8f84048425f068f6965ca8bb6af"
     private let baseAPIURL = "https://api.themoviedb.org/3"
@@ -57,7 +57,7 @@ class MovieService {
     ///   - completion: Completion handler
     public func fetch(from endpoint: Endpoint, withParams params: [String: String]? = nil, completion: @escaping (Result<Data, Error>) -> Void) {
         guard var urlComponents = URLComponents(string: baseAPIURL) else {
-            completion(.failure(MovieError.invalidURL))
+            completion(.failure(APIError.invalidURL))
             return
         }
         

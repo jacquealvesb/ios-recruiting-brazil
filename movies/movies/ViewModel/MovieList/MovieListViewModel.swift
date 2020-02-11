@@ -130,7 +130,7 @@ class MovieListViewModel: ObservableObject {
         self.dataProvider.searchMovie(query: query) { result in
             switch result {
             case .failure(let error):
-                if let error = error as? MovieError, error == .noData {
+                if let error = error as? APIError, error == .noData {
                     completion([], .noDataError)
                 } else {
                     completion([], .error)
