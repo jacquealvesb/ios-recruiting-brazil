@@ -55,7 +55,7 @@ class APIService {
     ///   - endpoint: Endpoint in which request is supposed to be made
     ///   - params: Request params
     ///   - completion: Completion handler
-    public func fetch(from endpoint: Endpoint, withParams params: [String: String]? = nil, completion: @escaping (Result<Data, Error>) -> Void) {
+    public func fetch<T: Codable>(from endpoint: Endpoint, withParams params: [String: String]? = nil, completion: @escaping (Result<T, Error>) -> Void) {
         guard var urlComponents = URLComponents(string: baseAPIURL) else {
             completion(.failure(APIError.invalidURL))
             return
@@ -70,7 +70,17 @@ class APIService {
         urlComponents.queryItems = queryItems
         
         URLSession.shared.request(from: urlComponents.url, params: params) { result in
-            completion(result)
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(let data):
+                do {
+                    let response = try self.jsonDecoder.decode(T.self, from: data) // Try to decode response
+                    completion(.success(response))
+                } catch {
+                    completion(.failure(APIError.serializationError))
+                }
+            }
         }
     }
 }
