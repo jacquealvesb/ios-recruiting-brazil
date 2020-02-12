@@ -35,7 +35,7 @@ class MovieListViewModel: ObservableObject {
         }
     }
     
-    private var page: Int = 0
+    private var page: Int = 1
     
     // Publishers
     @Published private(set) var movieCount: Int = 0

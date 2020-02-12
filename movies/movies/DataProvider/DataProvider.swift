@@ -57,7 +57,7 @@ class DataProvider: DataProvidable, ObservableObject {
     }
     
     public func fetchGenres() {
-        APIService.shared.fetch(from: .genres) { (result: Result<GenresResponse, Error>) in
+        APIService.shared.fetch(from: .genres) { (result: Result<GenresResponse, APIError>) in
             switch result {
             case .failure(let error):
                 print(error)
@@ -79,7 +79,7 @@ class DataProvider: DataProvidable, ObservableObject {
     }
     
     public func fetchPopularMovies(page: Int, completion: (() -> Void)? = nil) {
-        APIService.shared.fetch(from: .popularMovies) { (result: Result<MoviesResponse, Error>) in
+        APIService.shared.fetch(from: .popularMovies, withParams: ["page": "\(page)"]) { (result: Result<MoviesResponse, APIError>) in
             switch result {
             case .failure(let error):
                 self.popularMoviesPublisher.send(([], error))
@@ -106,7 +106,7 @@ class DataProvider: DataProvidable, ObservableObject {
         for id in ids {
             group.enter()
             
-            APIService.shared.fetch(from: .movie(id)) { (result: Result<MovieDTO, Error>) in
+            APIService.shared.fetch(from: .movie(id)) { (result: Result<MovieDTO, APIError>) in
                 switch result {
                 case .failure(let error):
                     fetchError = error
@@ -136,7 +136,7 @@ class DataProvider: DataProvidable, ObservableObject {
     }
     
     func searchMovie(query: String, completion: @escaping (Result<[Movie], Error>) -> Void) {
-        APIService.shared.fetch(from: .search, withParams: ["query": query]) { (result: Result<MoviesResponse, Error>) in
+        APIService.shared.fetch(from: .search, withParams: ["query": query]) { (result: Result<MoviesResponse, APIError>) in
             switch result {
             case .failure(let error):
                 completion(.failure(error))

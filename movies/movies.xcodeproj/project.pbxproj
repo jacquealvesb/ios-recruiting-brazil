@@ -35,7 +35,6 @@
 		1741EB5423949836007AD9FC /* MovieListViewControllerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1741EB5323949836007AD9FC /* MovieListViewControllerScreen.swift */; };
 		1741EB56239498D7007AD9FC /* MovieCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1741EB55239498D7007AD9FC /* MovieCollectionViewCell.swift */; };
 		174C053E2396813800886DD8 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174C053D2396813800886DD8 /* APIService.swift */; };
-		174D33192398316A004FDB38 /* URLSession+RequestFromURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174D33182398316A004FDB38 /* URLSession+RequestFromURL.swift */; };
 		176F99832393F2AC00023BE7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176F99822393F2AC00023BE7 /* AppDelegate.swift */; };
 		176F99852393F2AC00023BE7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176F99842393F2AC00023BE7 /* SceneDelegate.swift */; };
 		176F998D2393F2AC00023BE7 /* movies.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 176F998B2393F2AC00023BE7 /* movies.xcdatamodeld */; };
@@ -111,7 +110,6 @@
 		1741EB5323949836007AD9FC /* MovieListViewControllerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListViewControllerScreen.swift; sourceTree = "<group>"; };
 		1741EB55239498D7007AD9FC /* MovieCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCollectionViewCell.swift; sourceTree = "<group>"; };
 		174C053D2396813800886DD8 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
-		174D33182398316A004FDB38 /* URLSession+RequestFromURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+RequestFromURL.swift"; sourceTree = "<group>"; };
 		1750B9752393F8A0007B178C /* moviesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = moviesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1750B9792393F8A0007B178C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		176F997F2393F2AC00023BE7 /* Movs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Movs.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -374,7 +372,6 @@
 			isa = PBXGroup;
 			children = (
 				178FC0842397D2D300AB2ACF /* UserDefaults+ToggleFavorite.swift */,
-				174D33182398316A004FDB38 /* URLSession+RequestFromURL.swift */,
 				17E87ED023A3C8FD00A26C69 /* UIViewController+ScrollToTop.swift */,
 			);
 			path = Extensions;
@@ -732,7 +729,6 @@
 				176F99852393F2AC00023BE7 /* SceneDelegate.swift in Sources */,
 				1741EB452394365A007AD9FC /* Genre.swift in Sources */,
 				1741EB5223949784007AD9FC /* CodeView.swift in Sources */,
-				174D33192398316A004FDB38 /* URLSession+RequestFromURL.swift in Sources */,
 				17B031422395AD4800C98D23 /* FavoriteListViewControllerScreen.swift in Sources */,
 				177E9CEB239ED04200DBBF0C /* ErrorView.swift in Sources */,
 				173DEF2523AA909800BC6D2E /* FilterOptionsViewController.swift in Sources */,

@@ -49,15 +49,10 @@ class APIService {
         
         return jsonDecoder
     }()
-    
-    /// Fetches data from API
-    /// - Parameters:
-    ///   - endpoint: Endpoint in which request is supposed to be made
-    ///   - params: Request params
-    ///   - completion: Completion handler
-    public func fetch<T: Codable>(from endpoint: Endpoint, withParams params: [String: String]? = nil, completion: @escaping (Result<T, Error>) -> Void) {
+
+    public func fetch<T: Codable>(from endpoint: Endpoint, withParams params: [String: String]? = nil, completion: @escaping (Result<T, APIError>) -> Void) {
         guard var urlComponents = URLComponents(string: baseAPIURL) else {
-            completion(.failure(APIError.invalidURL))
+            completion(.failure(.invalidURL))
             return
         }
         
@@ -69,7 +64,7 @@ class APIService {
         urlComponents.path.append(contentsOf: endpoint.rawValue)
         urlComponents.queryItems = queryItems
         
-        URLSession.shared.request(from: urlComponents.url, params: params) { result in
+        request(from: urlComponents.url, params: params) { result in
             switch result {
             case .failure(let error):
                 completion(.failure(error))
@@ -78,9 +73,39 @@ class APIService {
                     let response = try self.jsonDecoder.decode(T.self, from: data) // Try to decode response
                     completion(.success(response))
                 } catch {
-                    completion(.failure(APIError.serializationError))
+                    completion(.failure(.serializationError))
                 }
             }
         }
+    }
+    
+    private func request(from url: URL?, params: [String: String]? = nil, completion: @escaping (Result<Data, APIError>) -> Void) {
+        guard let url = url else { // Check if request returned an error
+            completion(.failure(.invalidURL))
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if error != nil {
+                completion(.failure(.apiError))
+                return
+            }
+            
+            // Check if the http response status code is >= 200 and <= 300
+            guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+                completion(.failure(.invalidResponse))
+                return
+            }
+            
+            guard let data = data else { // Check if returned any data
+                completion(.failure(.noData))
+                return
+            }
+            
+            completion(.success(data))
+            
+        }
+        
+        task.resume()
     }
 }
