@@ -49,38 +49,10 @@ class APIService {
         
         return jsonDecoder
     }()
-
+    
     public func fetch<T: Codable>(from endpoint: Endpoint, withParams params: [String: String]? = nil, completion: @escaping (Result<T, APIError>) -> Void) {
-        guard var urlComponents = URLComponents(string: baseAPIURL) else {
-            completion(.failure(.invalidURL))
-            return
-        }
-        
-        var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
-        if let params = params {
-            queryItems.append(contentsOf: params.map { URLQueryItem(name: $0.key, value: $0.value) })
-        }
-    
-        urlComponents.path.append(contentsOf: endpoint.rawValue)
-        urlComponents.queryItems = queryItems
-        
-        request(from: urlComponents.url, params: params) { result in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let data):
-                do {
-                    let response = try self.jsonDecoder.decode(T.self, from: data) // Try to decode response
-                    completion(.success(response))
-                } catch {
-                    completion(.failure(.serializationError))
-                }
-            }
-        }
-    }
-    
-    private func request(from url: URL?, params: [String: String]? = nil, completion: @escaping (Result<Data, APIError>) -> Void) {
-        guard let url = url else { // Check if request returned an error
+ 
+        guard let url = url(from: endpoint, withParams: params) else {
             completion(.failure(.invalidURL))
             return
         }
@@ -97,15 +69,35 @@ class APIService {
                 return
             }
             
-            guard let data = data else { // Check if returned any data
+            guard let data = data else {
                 completion(.failure(.noData))
                 return
             }
             
-            completion(.success(data))
-            
+            do {
+                let response = try self.jsonDecoder.decode(T.self, from: data) // Try to decode response
+                completion(.success(response))
+            } catch {
+                completion(.failure(.serializationError))
+            }
         }
         
         task.resume()
+    }
+    
+    private func url(from endpoint: Endpoint, withParams params: [String: String]? = nil) -> URL? {
+        guard var urlComponents = URLComponents(string: baseAPIURL) else {
+            return nil
+        }
+        
+        var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
+        if let params = params {
+            queryItems.append(contentsOf: params.map { URLQueryItem(name: $0.key, value: $0.value) })
+        }
+        
+        urlComponents.path.append(contentsOf: endpoint.rawValue)
+        urlComponents.queryItems = queryItems
+        
+        return urlComponents.url
     }
 }
