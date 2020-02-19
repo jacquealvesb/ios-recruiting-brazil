@@ -35,7 +35,7 @@ class MovieListViewModel: ObservableObject {
         }
     }
     
-    private var page: Int = 0
+    private var page: Int = 1
     
     // Publishers
     @Published private(set) var movieCount: Int = 0
@@ -112,7 +112,7 @@ class MovieListViewModel: ObservableObject {
         self.searchMovies = []
         self.dataProvider.fetchPopularMovies(page: self.page, completion: completion)
         if self.dataProvider.genres.isEmpty {
-            MovieService.fetchGenres()
+            dataProvider.fetchGenres()
         }
     }
     
@@ -130,7 +130,7 @@ class MovieListViewModel: ObservableObject {
         self.dataProvider.searchMovie(query: query) { result in
             switch result {
             case .failure(let error):
-                if let error = error as? MovieError, error == .noData {
+                if let error = error as? APIError, error == .noData {
                     completion([], .noDataError)
                 } else {
                     completion([], .error)

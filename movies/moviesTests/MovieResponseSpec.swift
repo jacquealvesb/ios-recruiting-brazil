@@ -19,7 +19,7 @@ class MovieResponseSpec: QuickSpec {
         describe("the 'Movie Reponse' ") {
             context("when decoded with all values ") {
                 beforeEach {
-                    sut = try? MovieService.jsonDecoder.decode(MoviesResponse.self, from: movieResponseComplete)
+                    sut = try? APIService.shared.jsonDecoder.decode(MoviesResponse.self, from: movieResponseComplete)
                     dateFormatter.dateFormat = "yyyy-MM-dd"
                 }
                 
@@ -44,7 +44,7 @@ class MovieResponseSpec: QuickSpec {
             
             context("when missing title, genre ids and poster path parameters ") {
                 beforeEach {
-                    sut = try? MovieService.jsonDecoder.decode(MoviesResponse.self, from: movieResponseMissingParameter)
+                    sut = try? APIService.shared.jsonDecoder.decode(MoviesResponse.self, from: movieResponseMissingParameter)
                     dateFormatter.dateFormat = "yyyy-MM-dd"
                 }
                 
@@ -67,7 +67,7 @@ class MovieResponseSpec: QuickSpec {
             
             context("when missing value for release date ") {
                 beforeEach {
-                    sut = try? MovieService.jsonDecoder.decode(MoviesResponse.self, from: movieResponseMissingValue)
+                    sut = try? APIService.shared.jsonDecoder.decode(MoviesResponse.self, from: movieResponseMissingValue)
                     dateFormatter.dateFormat = "yyyy-MM-dd"
                 }
                 

@@ -24,16 +24,7 @@ class MockedDataProvider: DataProvidable {
         return self.favoriteMoviesPublisher.value.0
     }
     
-    var genres: [Int: String] = {
-        let dict: [Int: String] = [
-            0: "Animation",
-            1: "Comedy",
-            2: "Adventure",
-            3: "Drama"
-        ]
-        
-        return dict
-    }()
+    var genres: [Int: String] = [:]
     
     private var favoriteIds = [0, 1, 2, 5]
     private var dateFormatter: DateFormatter = {
@@ -44,8 +35,18 @@ class MockedDataProvider: DataProvidable {
     
     init() {
         // Initializing movies
+        fetchGenres()
         fetchPopularMovies(page: 1)
         fetchFavoriteMovies()
+    }
+    
+    func fetchGenres() {
+        self.genres = [
+            0: "Animation",
+            1: "Comedy",
+            2: "Adventure",
+            3: "Drama"
+        ]
     }
     
     func fetchPopularMovies(page: Int, completion: (() -> Void)? = nil) {
