@@ -12,7 +12,7 @@ class MoviesListCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var rootViewController: UINavigationController
     
-    var dataProvider: DataProvidable
+    let dataProvider: DataProvidable
     
     init(rootViewController: UINavigationController, dataProvider: DataProvidable) {
         self.rootViewController = rootViewController

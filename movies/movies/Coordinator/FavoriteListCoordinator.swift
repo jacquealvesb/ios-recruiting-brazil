@@ -13,7 +13,7 @@ class FavoriteListCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var rootViewController: UINavigationController
     
-    var dataProvider: DataProvidable
+    let dataProvider: DataProvidable
     var filterNavigationController: UINavigationController?
     
     init(rootViewController: UINavigationController, dataProvider: DataProvidable) {
