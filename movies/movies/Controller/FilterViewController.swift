@@ -77,12 +77,9 @@ extension FilterViewController: UITableViewDataSource {
 // MARK: - Delegate
 extension FilterViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let viewModel = self.viewModel.viewModelForFilterOptions(at: indexPath.row) else { return }
-        let optionsViewController = FilterOptionsViewController(viewModel: viewModel)
-        
-        self.navigationController?.pushViewController(optionsViewController, animated: true)
-        
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        self.viewModel.showFilterOptionsForItem(at: indexPath.row)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

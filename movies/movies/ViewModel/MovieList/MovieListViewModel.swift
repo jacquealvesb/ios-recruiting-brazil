@@ -18,6 +18,7 @@ enum MovieListViewState {
 }
 
 class MovieListViewModel: ObservableObject {
+    weak var coordinator: MoviesListCoordinator?
     
     private var searchMovies: [Movie] = [] {
         willSet {
@@ -82,6 +83,13 @@ class MovieListViewModel: ObservableObject {
                     self?.state = .movies
                 }
             })
+    }
+    
+    // MARK: - Flow
+    
+    public func showDetailsOfMovie(at index: Int) {
+        guard let viewModel = viewModelForMovieDetails(at: index) else { return }
+        self.coordinator?.showMovieDetails(withViewModel: viewModel)
     }
     
     // MARK: - Data convertion

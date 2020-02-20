@@ -10,6 +10,7 @@ import Foundation
 import Combine
 
 class FavoriteListViewModel: ObservableObject {
+    weak var coordinator: FavoriteListCoordinator?
     
     private var searchMovies: [Movie] = [] {
         willSet {
@@ -81,6 +82,18 @@ class FavoriteListViewModel: ObservableObject {
                 guard let favoriteMovies = self?.dataProvider.favoriteMovies else { return }
                 self?.updateList(favoriteMovies)
             })
+    }
+    
+    // MARK: - Flow
+    
+    public func showDetailsOfMovie(at index: Int) {
+        guard let viewModel = viewModelForMovieDetails(at: index) else { return }
+        self.coordinator?.showMovieDetails(withViewModel: viewModel)
+    }
+    
+    public func showFilterView() {
+        let viewModel = self.viewModelForFilters()
+        self.coordinator?.showFilterView(withViewModel: viewModel)
     }
     
     // MARK: - Data convertion

@@ -10,13 +10,18 @@ import UIKit
 import Combine
 
 class MovieListViewController: UIViewController {
-    let viewModel: MovieListViewModel = MovieListViewModel(dataProvider: DataProvider.shared)
+    var viewModel: MovieListViewModel!
     let screen: MovieListViewControllerScreen = MovieListViewControllerScreen(frame: UIScreen.main.bounds)
     
     // Cancellables
     var stateSubscriber: AnyCancellable?
     var movieCountSubscriber: AnyCancellable?
     var tabBarSelectSubscriber: AnyCancellable?
+    
+    convenience init(viewModel: MovieListViewModel) {
+        self.init()
+        self.viewModel = viewModel
+    }
     
     override func loadView() {
         self.view = screen
@@ -103,12 +108,9 @@ extension MovieListViewController: UICollectionViewDelegate, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let movieViewModel = self.viewModel.viewModelForMovieDetails(at: indexPath.row) else { return }
-        
-        let detailsView = MovieDetailsViewController(viewModel: movieViewModel)
-        navigationController?.pushViewController(detailsView, animated: true)
-        
         collectionView.deselectItem(at: indexPath, animated: true)
+        
+        self.viewModel.showDetailsOfMovie(at: indexPath.row)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

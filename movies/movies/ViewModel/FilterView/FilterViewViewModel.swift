@@ -10,6 +10,8 @@ import Foundation
 import Combine
 
 class FilterViewViewModel {
+    weak var coordinator: FavoriteListCoordinator?
+    
     private let filters: [Filter]
     private let subject: CurrentValueSubject<[Filter], Never> // Filters subject from favorite list view
     
@@ -24,6 +26,15 @@ class FilterViewViewModel {
         self.filters = filterSubject.value.map { $0.copy() } // Set filter as copy of current filters, without their selected values
         self.subject = filterSubject
     }
+    
+    // MARK: - Flow
+    
+    public func showFilterOptionsForItem(at index: Int) {
+        guard let viewModel = viewModelForFilterOptions(at: index) else { return }
+        self.coordinator?.showFilterOptionsView(withViewModel: viewModel)
+    }
+    
+    // MARK: - Data Conversion
     
     public func viewModelForFilter(at index: Int) -> FilterCategoryCellViewModel? {
         guard index < self.filters.count else { return nil }

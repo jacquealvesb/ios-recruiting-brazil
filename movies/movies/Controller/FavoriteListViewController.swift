@@ -10,13 +10,18 @@ import UIKit
 import Combine
 
 class FavoriteListViewController: UIViewController {
-    let viewModel: FavoriteListViewModel = FavoriteListViewModel(dataProvider: DataProvider.shared)
+    var viewModel: FavoriteListViewModel!
     let screen: FavoriteListViewControllerScreen = FavoriteListViewControllerScreen(frame: UIScreen.main.bounds)
     
     // Cancellables
     var stateSubscriber: AnyCancellable?
     var movieCountSubscriber: AnyCancellable?
     var tabBarSelectSubscriber: AnyCancellable?
+    
+    convenience init(viewModel: FavoriteListViewModel) {
+        self.init()
+        self.viewModel = viewModel
+    }
     
     override func loadView() {
         self.view = screen
@@ -83,10 +88,7 @@ class FavoriteListViewController: UIViewController {
     }
     
     @objc func showFilterView() {
-        let viewModel = self.viewModel.viewModelForFilters()
-        let filterViewController = FilterViewController(viewModel: viewModel)
-        
-        self.present(UINavigationController(rootViewController: filterViewController), animated: true)
+        self.viewModel.showFilterView()
     }
     
     @objc func removeFilter() {
@@ -121,12 +123,9 @@ extension FavoriteListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let movieViewModel = self.viewModel.viewModelForMovieDetails(at: indexPath.row) else { return }
-        
-        let detailsView = MovieDetailsViewController(viewModel: movieViewModel)
-        navigationController?.pushViewController(detailsView, animated: true)
-        
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        self.viewModel.showDetailsOfMovie(at: indexPath.row)
     }
     
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
