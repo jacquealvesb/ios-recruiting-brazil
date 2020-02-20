@@ -10,14 +10,15 @@ import UIKit
 
 class AppCoordinator: MainCoordinator {
     
-    let window: UIWindow?
-    
     var childCoordinators: [Coordinator] = []
     var rootViewController: TabBarViewController = {
         let viewController = TabBarViewController()
         
         return viewController
     }()
+    
+    let window: UIWindow?
+    let dataProvider = DataProvider.shared
     
     init(window: UIWindow?) {
         self.window = window
@@ -49,8 +50,8 @@ class AppCoordinator: MainCoordinator {
         self.rootViewController.viewControllers = [movieListViewController, favoriteListViewController]
         self.rootViewController.delegate = self.rootViewController
         
-        let movieListCoordinator = MoviesListCoordinator(rootViewController: movieListViewController)
-        let favoriteListCoordinator = FavoriteListCoordinator(rootViewController: favoriteListViewController)
+        let movieListCoordinator = MoviesListCoordinator(rootViewController: movieListViewController, dataProvider: dataProvider)
+        let favoriteListCoordinator = FavoriteListCoordinator(rootViewController: favoriteListViewController, dataProvider: dataProvider)
         
         childCoordinators = [movieListCoordinator, favoriteListCoordinator]
         

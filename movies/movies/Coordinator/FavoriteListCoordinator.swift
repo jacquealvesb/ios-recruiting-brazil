@@ -13,14 +13,16 @@ class FavoriteListCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var rootViewController: UINavigationController
     
+    var dataProvider: DataProvidable
     var filterNavigationController: UINavigationController?
     
-    init(rootViewController: UINavigationController) {
+    init(rootViewController: UINavigationController, dataProvider: DataProvidable) {
         self.rootViewController = rootViewController
+        self.dataProvider = dataProvider
     }
     
     func start() {
-        let viewModel = FavoriteListViewModel(dataProvider: DataProvider.shared)
+        let viewModel = FavoriteListViewModel(dataProvider: dataProvider)
         let viewController = FavoriteListViewController(viewModel: viewModel)
         
         viewModel.coordinator = self

@@ -12,12 +12,15 @@ class MoviesListCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var rootViewController: UINavigationController
     
-    init(rootViewController: UINavigationController) {
+    var dataProvider: DataProvidable
+    
+    init(rootViewController: UINavigationController, dataProvider: DataProvidable) {
         self.rootViewController = rootViewController
+        self.dataProvider = dataProvider
     }
     
     func start() {
-        let viewModel = MovieListViewModel(dataProvider: DataProvider.shared)
+        let viewModel = MovieListViewModel(dataProvider: dataProvider)
         let viewController = MovieListViewController(viewModel: viewModel)
         
         viewModel.coordinator = self
