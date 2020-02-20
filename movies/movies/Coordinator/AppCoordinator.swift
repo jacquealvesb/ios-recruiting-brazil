@@ -9,14 +9,33 @@
 import UIKit
 
 class AppCoordinator: MainCoordinator {
-    var childCoordinators: [Coordinator] = []
-    var rootViewController: TabBarViewController
     
-    init(rootViewController: TabBarViewController) {
-        self.rootViewController = rootViewController
+    let window: UIWindow?
+    
+    var childCoordinators: [Coordinator] = []
+    var rootViewController: TabBarViewController = {
+        let viewController = TabBarViewController()
+        
+        return viewController
+    }()
+    
+    init(window: UIWindow?) {
+        self.window = window
     }
     
     func start() {
+        guard let window = window else {
+            return
+        }
+        
+        setupTabBar()
+        
+        window.tintColor = .systemOrange
+        window.rootViewController = rootViewController
+        window.makeKeyAndVisible()
+    }
+    
+    func setupTabBar() {
         let movieListViewController = UINavigationController()
         let favoriteListViewController = UINavigationController()
         
