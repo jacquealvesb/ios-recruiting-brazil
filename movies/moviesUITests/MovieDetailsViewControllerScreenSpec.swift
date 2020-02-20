@@ -15,10 +15,13 @@ import Nimble_Snapshots
 class MovieDetailsViewControllerScreenSpec: QuickSpec {
     override func spec() {
         var sut: MovieDetailsViewControllerScreen!
+        var dataProvider: MockedDataProvider!
         
         describe("the 'Details View' ") {
-            let movie = MockedDataProvider.shared.popularMovies.first!
-            let viewModel = MovieDetailsViewModel(of: movie, dataProvider: MockedDataProvider.shared)
+            dataProvider = MockedDataProvider()
+            
+            let movie = dataProvider.popularMovies.first!
+            let viewModel = MovieDetailsViewModel(of: movie, dataProvider: dataProvider)
             let frame = UIScreen.main.bounds
             
             context("when is not on favorites list") {

@@ -14,6 +14,7 @@ import Nimble
 class FavoriteListViewModelSpec: QuickSpec {
     override func spec() {
         var sut: FavoriteListViewModel!
+        var dataProvider: DataProvidable!
         
         describe("the 'Favorite List' view model") {
             context("when filter array of movies ") {
@@ -22,7 +23,8 @@ class FavoriteListViewModelSpec: QuickSpec {
                 context("by name ") {
                     context("with more than one match ") {
                         beforeEach {
-                            sut = FavoriteListViewModel(dataProvider: MockedDataProvider.shared)
+                            dataProvider = MockedDataProvider()
+                            sut = FavoriteListViewModel(dataProvider: dataProvider)
                             filteredMovies = sut.filterArray(sut.dataProvider.favoriteMovies, with: "The")
                         }
                         
@@ -33,7 +35,8 @@ class FavoriteListViewModelSpec: QuickSpec {
                     
                     context("with no matches ") {
                         beforeEach {
-                            sut = FavoriteListViewModel(dataProvider: MockedDataProvider.shared)
+                            dataProvider = MockedDataProvider()
+                            sut = FavoriteListViewModel(dataProvider: dataProvider)
                             filteredMovies = sut.filterArray(sut.dataProvider.favoriteMovies, with: "Captain")
                         }
                         
@@ -46,7 +49,8 @@ class FavoriteListViewModelSpec: QuickSpec {
                 context("by custom filters ") {
                     context("using date ") {
                         beforeEach {
-                            sut = FavoriteListViewModel(dataProvider: MockedDataProvider.shared)
+                            dataProvider = MockedDataProvider()
+                            sut = FavoriteListViewModel(dataProvider: dataProvider)
                             
                             var filters = sut.filters.value
                             
@@ -65,7 +69,8 @@ class FavoriteListViewModelSpec: QuickSpec {
                     
                     context("using genre ") {
                         beforeEach {
-                            sut = FavoriteListViewModel(dataProvider: MockedDataProvider.shared)
+                            dataProvider = MockedDataProvider()
+                            sut = FavoriteListViewModel(dataProvider: dataProvider)
                             
                             var filters = sut.filters.value
                             
@@ -84,7 +89,8 @@ class FavoriteListViewModelSpec: QuickSpec {
                     
                     context("using date and genre ") {
                         beforeEach {
-                            sut = FavoriteListViewModel(dataProvider: MockedDataProvider.shared)
+                            dataProvider = MockedDataProvider()
+                            sut = FavoriteListViewModel(dataProvider: dataProvider)
                             
                             var filters = sut.filters.value
                             
@@ -112,8 +118,9 @@ class FavoriteListViewModelSpec: QuickSpec {
                 let correctDates: [String] = ["1989", "2009", "2010"]
                 
                 beforeEach {
-                    sut = FavoriteListViewModel(dataProvider: MockedDataProvider.shared)
-                    returnedDates = sut.getAllDates(from: MockedDataProvider.shared.favoriteMovies)
+                    dataProvider = MockedDataProvider()
+                    sut = FavoriteListViewModel(dataProvider: dataProvider)
+                    returnedDates = sut.getAllDates(from: dataProvider.favoriteMovies)
                 }
                 
                 it("should return correct dates.") {
@@ -126,8 +133,9 @@ class FavoriteListViewModelSpec: QuickSpec {
                 let correctGenres: [String] = ["Animation", "Comedy", "Drama"]
                 
                 beforeEach {
-                    sut = FavoriteListViewModel(dataProvider: MockedDataProvider.shared)
-                    returnedGenres = sut.getAllGenres(from: MockedDataProvider.shared.favoriteMovies, genresDictionary: MockedDataProvider.shared.genres)
+                    dataProvider = MockedDataProvider()
+                    sut = FavoriteListViewModel(dataProvider: dataProvider)
+                    returnedGenres = sut.getAllGenres(from: dataProvider.favoriteMovies, genresDictionary: dataProvider.genres)
                 }
                 
                 it("should return correct genres.") {
@@ -141,7 +149,8 @@ class FavoriteListViewModelSpec: QuickSpec {
                 let correctArray = ["2", "7", "9"]
                 
                 beforeEach {
-                    sut = FavoriteListViewModel(dataProvider: MockedDataProvider.shared)
+                    dataProvider = MockedDataProvider()
+                    sut = FavoriteListViewModel(dataProvider: dataProvider)
                     cleanedArray = sut.cleanArray(testArray)
                 }
                 

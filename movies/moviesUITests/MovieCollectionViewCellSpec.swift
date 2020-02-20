@@ -15,10 +15,13 @@ import Nimble_Snapshots
 class MovieCollectionViewCellSpec: QuickSpec {
     override func spec() {
         var sut: MovieCollectionViewCell!
-
+        var dataProvider: MockedDataProvider!
+        
         describe("the 'Movie Cell' ") {
-            let movie = MockedDataProvider.shared.popularMovies.first!
-            let viewModel = MovieCellViewModel(of: movie, dataProvider: MockedDataProvider.shared)
+            dataProvider = MockedDataProvider()
+            
+            let movie = dataProvider.popularMovies.first!
+            let viewModel = MovieCellViewModel(of: movie, dataProvider: dataProvider)
             let frame = CGRect(x: 0, y: 0, width: 250, height: 375)
             
             context("when fetched from API ") {

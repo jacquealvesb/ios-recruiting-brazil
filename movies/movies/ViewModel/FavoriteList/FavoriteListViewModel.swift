@@ -109,7 +109,7 @@ class FavoriteListViewModel: ObservableObject {
     /// - Parameter index: Index of the movie
     public func viewModelForMovieDetails(at index: Int) -> MovieDetailsViewModel? {
         guard index < self.movieCount else { return nil } // Check if it is an valid index
-        return MovieDetailsViewModel(of: self.searchMovies[index])
+        return MovieDetailsViewModel(of: self.searchMovies[index], dataProvider: self.dataProvider)
     }
     
     /// Return a view model for the filters screen

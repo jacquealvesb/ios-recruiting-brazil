@@ -98,14 +98,14 @@ class MovieListViewModel: ObservableObject {
     /// - Parameter index: Index of the movie
     public func viewModelForMovie(at index: Int) -> MovieCellViewModel? {
         guard index < self.movieCount else { return nil } // Check if it is an valid index
-        return MovieCellViewModel(of: self.searchMovies[index])
+        return MovieCellViewModel(of: self.searchMovies[index], dataProvider: self.dataProvider)
     }
     
     /// Return the details view model for a movie at an index
     /// - Parameter index: Index of the movie
     public func viewModelForMovieDetails(at index: Int) -> MovieDetailsViewModel? {
         guard index < self.movieCount else { return nil } // Check if it is an valid index
-        return MovieDetailsViewModel(of: self.searchMovies[index])
+        return MovieDetailsViewModel(of: self.searchMovies[index], dataProvider: self.dataProvider)
     }
     
     // MARK: - Movie List

@@ -26,8 +26,6 @@ protocol DataProvidable {
 }
 
 class DataProvider: DataProvidable, ObservableObject {
-
-    public static let shared = DataProvider()
     
     var popularMoviesPublisher = CurrentValueSubject<([Movie], Error?), Never>(([], nil))
     var favoriteMoviesPublisher = CurrentValueSubject<([Movie], Error?), Never>(([], nil))

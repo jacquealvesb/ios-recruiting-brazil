@@ -28,7 +28,7 @@ class MovieCellViewModel: ObservableObject {
     // Cancellables
     private var favoriteIdsSubscriber: AnyCancellable?
 
-    init(of movie: Movie, dataProvider: DataProvidable = DataProvider.shared) {
+    init(of movie: Movie, dataProvider: DataProvidable) {
         self.movie = movie
         self.favorite = dataProvider.isFavorite(self.movie.id)
         self.toggleFavorite = { // Set function to be called when favorite button is clicked

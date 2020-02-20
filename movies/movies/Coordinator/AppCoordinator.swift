@@ -18,7 +18,7 @@ class AppCoordinator: MainCoordinator {
     }()
     
     let window: UIWindow?
-    let dataProvider = DataProvider.shared
+    let dataProvider = DataProvider()
     
     init(window: UIWindow?) {
         self.window = window

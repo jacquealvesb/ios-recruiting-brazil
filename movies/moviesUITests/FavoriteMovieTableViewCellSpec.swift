@@ -15,12 +15,14 @@ import Nimble_Snapshots
 class FavoriteMovieTableViewCellSpec: QuickSpec {
     override func spec() {
         var sut: FavoriteMovieTableViewCell!
+        var dataProvider: MockedDataProvider!
 
         describe("the 'Favorite Movie Cell' ") {
-            let movie = MockedDataProvider.shared.popularMovies.first!
-            
             context("when fetched from API ") {
                 beforeEach {
+                    dataProvider = MockedDataProvider()
+                    
+                    let movie = dataProvider.popularMovies.first!
                     let viewModel = FavoriteMovieCellViewModel(of: movie)
                     
                     sut = FavoriteMovieTableViewCell()
