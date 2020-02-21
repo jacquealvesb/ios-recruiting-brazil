@@ -9,6 +9,10 @@
 import Foundation
 import Combine
 
+protocol MovieListDelegate: class {
+    func showMovieDetails(withViewModel movieViewModel: MovieDetailsViewModel)
+}
+
 enum MovieListViewState {
     case movies
     case noDataError
@@ -18,7 +22,7 @@ enum MovieListViewState {
 }
 
 class MovieListViewModel: ObservableObject {
-    weak var coordinator: MoviesListCoordinator?
+    weak var delegate: MovieListDelegate?
     
     private var searchMovies: [Movie] = [] {
         willSet {
@@ -89,7 +93,7 @@ class MovieListViewModel: ObservableObject {
     
     public func showDetailsOfMovie(at index: Int) {
         guard let viewModel = viewModelForMovieDetails(at: index) else { return }
-        self.coordinator?.showMovieDetails(withViewModel: viewModel)
+        self.delegate?.showMovieDetails(withViewModel: viewModel)
     }
     
     // MARK: - Data convertion

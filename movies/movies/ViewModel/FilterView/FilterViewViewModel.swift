@@ -9,8 +9,12 @@
 import Foundation
 import Combine
 
+protocol FilterViewDelegate: class {
+    func showFilterOptionsView(withViewModel: FilterOptionsViewModel)
+}
+
 class FilterViewViewModel {
-    weak var coordinator: FavoriteListCoordinator?
+    weak var delegate: FilterViewDelegate?
     
     private let filters: [Filter]
     private let subject: CurrentValueSubject<[Filter], Never> // Filters subject from favorite list view
@@ -31,7 +35,7 @@ class FilterViewViewModel {
     
     public func showFilterOptionsForItem(at index: Int) {
         guard let viewModel = viewModelForFilterOptions(at: index) else { return }
-        self.coordinator?.showFilterOptionsView(withViewModel: viewModel)
+        self.delegate?.showFilterOptionsView(withViewModel: viewModel)
     }
     
     // MARK: - Data Conversion

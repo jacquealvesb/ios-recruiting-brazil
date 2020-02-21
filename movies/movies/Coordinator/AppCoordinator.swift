@@ -31,7 +31,6 @@ class AppCoordinator: MainCoordinator {
         
         setupTabBar()
         
-        window.tintColor = .systemOrange
         window.rootViewController = rootViewController
         window.makeKeyAndVisible()
     }

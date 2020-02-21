@@ -9,8 +9,13 @@
 import Foundation
 import Combine
 
+protocol FavoriteListDelegate: class {
+    func showMovieDetails(withViewModel: MovieDetailsViewModel)
+    func showFilterView(withViewModel: FilterViewViewModel)
+}
+
 class FavoriteListViewModel: ObservableObject {
-    weak var coordinator: FavoriteListCoordinator?
+    weak var delegate: FavoriteListDelegate?
     
     private var searchMovies: [Movie] = [] {
         willSet {
@@ -88,12 +93,12 @@ class FavoriteListViewModel: ObservableObject {
     
     public func showDetailsOfMovie(at index: Int) {
         guard let viewModel = viewModelForMovieDetails(at: index) else { return }
-        self.coordinator?.showMovieDetails(withViewModel: viewModel)
+        self.delegate?.showMovieDetails(withViewModel: viewModel)
     }
     
     public func showFilterView() {
         let viewModel = self.viewModelForFilters()
-        self.coordinator?.showFilterView(withViewModel: viewModel)
+        self.delegate?.showFilterView(withViewModel: viewModel)
     }
     
     // MARK: - Data convertion

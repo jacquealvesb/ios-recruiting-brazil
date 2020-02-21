@@ -25,11 +25,13 @@ class FavoriteListCoordinator: Coordinator {
         let viewModel = FavoriteListViewModel(dataProvider: dataProvider)
         let viewController = FavoriteListViewController(viewModel: viewModel)
         
-        viewModel.coordinator = self
+        viewModel.delegate = self
         
         self.rootViewController.pushViewController(viewController, animated: false)
     }
-    
+}
+
+extension FavoriteListCoordinator: FavoriteListDelegate {
     func showMovieDetails(withViewModel movieViewModel: MovieDetailsViewModel) {
         let viewController = MovieDetailsViewController(viewModel: movieViewModel)
         
@@ -37,16 +39,18 @@ class FavoriteListCoordinator: Coordinator {
     }
     
     func showFilterView(withViewModel viewModel: FilterViewViewModel) {
-        viewModel.coordinator = self
+        viewModel.delegate = self
         
         let viewController = FilterViewController(viewModel: viewModel)
         self.filterNavigationController = UINavigationController(rootViewController: viewController)
         
         self.rootViewController.present(self.filterNavigationController!, animated: true)
     }
-    
+}
+
+extension FavoriteListCoordinator: FilterViewDelegate {
     func showFilterOptionsView(withViewModel viewModel: FilterOptionsViewModel) {
-        viewModel.coordinator = self
+        viewModel.delegate = self
         
         let viewController = FilterOptionsViewController(viewModel: viewModel)
         

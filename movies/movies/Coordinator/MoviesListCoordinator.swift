@@ -23,11 +23,13 @@ class MoviesListCoordinator: Coordinator {
         let viewModel = MovieListViewModel(dataProvider: dataProvider)
         let viewController = MovieListViewController(viewModel: viewModel)
         
-        viewModel.coordinator = self
+        viewModel.delegate = self
         
         self.rootViewController.pushViewController(viewController, animated: false)
     }
-    
+}
+
+extension MoviesListCoordinator: MovieListDelegate {
     func showMovieDetails(withViewModel movieViewModel: MovieDetailsViewModel) {
         let viewController = MovieDetailsViewController(viewModel: movieViewModel)
         

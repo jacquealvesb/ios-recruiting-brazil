@@ -9,7 +9,7 @@
 import Foundation
 
 class FilterOptionsViewModel {
-    weak var coordinator: FavoriteListCoordinator?
+    weak var delegate: FavoriteListCoordinator?
     
     private let filter: Filter
     
